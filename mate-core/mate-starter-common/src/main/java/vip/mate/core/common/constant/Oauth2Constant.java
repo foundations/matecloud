@@ -25,9 +25,9 @@ package vip.mate.core.common.constant;
 public class Oauth2Constant {
 
 
-	private static final String ALL = "/**";
+	public static final String ALL = "/**";
 
-	private static final String OAUTH_ALL = "/oauth/**";
+	public static final String OAUTH_ALL = "/oauth/**";
 
 	public static final String OAUTH_AUTHORIZE = "/oauth/authorize";
 
@@ -143,5 +143,35 @@ public class Oauth2Constant {
 	 * 权限标识前缀
 	 */
 	public static final String MATE_PERMISSION_PREFIX = "mate.permission.";
+
+	/**
+	 * 字段描述开始：用户ID
+	 */
+	public static final String MATE_USER_ID = "userId";
+
+	/**
+	 * 用户名
+	 */
+	public static final String MATE_USER_NAME = "userName";
+
+	/**
+	 * 用户头像
+	 */
+	public static final String MATE_AVATAR = "avatar";
+
+	/**
+	 * 用户权限ID
+	 */
+	public static final String MATE_ROLE_ID = "roleId";
+
+	/**
+	 * 用户类型
+	 */
+	public static final String MATE_TYPE = "type";
+
+	/**
+	 * 租户ID
+	 */
+	public static final String MATE_TENANT_ID = "tenantId";
 
 }
