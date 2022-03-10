@@ -6,7 +6,7 @@
 
     <artifactId>mate-core</artifactId>
     <groupId>vip.mate</groupId>
-    <version>2.5.8</version>
+    <version>4.2.8</version>
     <packaging>pom</packaging>
     <name>mate-core</name>
     <description>based on Spring Cloud Alibaba microservice components</description>
@@ -45,15 +45,12 @@
         <module>mate-starter-jetcache</module>
         <module>mate-starter-log</module>
         <module>mate-starter-gray</module>
-        <module>mate-starter-sharding</module>
-        <module>mate-starter-elasticsearch</module>
         <module>mate-starter-redis</module>
         <module>mate-starter-oss</module>
         <module>mate-starter-sms</module>
         <module>mate-starter-kafka</module>
         <module>mate-starter-file</module>
         <module>mate-starter-cloud</module>
-        <module>mate-starter-dozer</module>
         <module>mate-starter-rule</module>
         <module>mate-starter-sentinel</module>
         <module>mate-starter-seata</module>
@@ -61,18 +58,16 @@
         <module>mate-starter-job</module>
         <module>mate-starter-mail</module>
         <module>mate-starter-strategy</module>
-        <module>mate-starter-retrofit</module>
-        <module>mate-starter-j2cache</module>
         <module>mate-starter-mongodb</module>
         <module>mate-starter-lock</module>
-        <module>mate-starter-encrypt</module>
         <module>mate-starter-rabbit</module>
         <module>mate-starter-mybatis</module>
         <module>mate-starter-idempotent</module>
+        <module>mate-starter-validator</module>
     </modules>
 
     <properties>
-        <matecloud.core.version>2.5.8</matecloud.core.version>
+        <matecloud.core.version>4.2.8</matecloud.core.version>
         <swagger.version>2.9.2</swagger.version>
         <swagger.models.version>1.5.21</swagger.models.version>
         <swagger.bootstrapui.version>1.9.4</swagger.bootstrapui.version>
@@ -107,6 +102,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
@@ -114,6 +113,11 @@
         <dependency>
             <groupId>org.springframework.retry</groupId>
             <artifactId>spring-retry</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <!--            <scope>provided</scope>-->
         </dependency>
     </dependencies>
 
@@ -241,7 +245,7 @@
             <properties>
                 <spring.active>dev</spring.active>
                 <config.server-addr>127.0.0.1:8848</config.server-addr>
-                <config.namespace>8c29b21f-c146-4925-9168-3590e754f9da</config.namespace>
+                <config.namespace></config.namespace>
                 <config.group>DEFAULT_GROUP</config.group>
                 <discovery.server-addr>127.0.0.1:8848</discovery.server-addr>
                 <sentinel.port>8719</sentinel.port>
@@ -279,13 +283,16 @@
             <id>docker</id>
             <properties>
                 <spring.active>docker</spring.active>
-                <config.server-addr>127.0.0.1:8848</config.server-addr>
+                <config.server-addr>172.30.0.48:8848</config.server-addr>
                 <config.namespace></config.namespace>
                 <config.group>DEFAULT_GROUP</config.group>
-                <discovery.server-addr>127.0.0.1:8848</discovery.server-addr>
+                <discovery.server-addr>172.30.0.48:8848</discovery.server-addr>
                 <sentinel.port>8719</sentinel.port>
-                <sentinel.dashboard>localhost:8080</sentinel.dashboard>
+                <sentinel.dashboard>172.30.0.80:8088</sentinel.dashboard>
             </properties>
+            <!--            <activation>-->
+            <!--                <activeByDefault>true</activeByDefault>-->
+            <!--            </activation>-->
         </profile>
     </profiles>
 

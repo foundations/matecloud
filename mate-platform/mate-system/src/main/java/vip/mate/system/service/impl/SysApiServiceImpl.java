@@ -16,12 +16,12 @@
  */
 package vip.mate.system.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import vip.mate.core.common.util.StringUtil;
 import vip.mate.core.database.entity.Search;
 import vip.mate.core.web.util.CollectionUtil;
 import vip.mate.system.entity.SysApi;
@@ -42,40 +42,40 @@ import java.util.Collection;
 @Service
 public class SysApiServiceImpl extends ServiceImpl<SysApiMapper, SysApi> implements ISysApiService {
 
-	@Override
-	public IPage<SysApi> listPage(Page page, Search search, String serviceId) {
-		LambdaQueryWrapper<SysApi> queryWrapper = new LambdaQueryWrapper<>();
-		if (StringUtil.isNotBlank(search.getStartDate())) {
-			queryWrapper.between(SysApi::getCreateTime, search.getStartDate(), search.getEndDate());
-		}
-		if (StringUtil.isNotBlank(search.getKeyword())) {
-			queryWrapper.like(SysApi::getCode, search.getKeyword())
-					.or()
-					.like(SysApi::getPath, search.getKeyword());
-		}
-		if (!serviceId.equals("-1")) {
-			queryWrapper.eq(SysApi::getServiceId, serviceId);
-		}
-		queryWrapper.orderByDesc(SysApi::getId);
-		return this.baseMapper.selectPage(page, queryWrapper);
-	}
+    @Override
+    public IPage<SysApi> listPage(Page page, Search search, String serviceId) {
+        LambdaQueryWrapper<SysApi> queryWrapper = new LambdaQueryWrapper<>();
+        if (StrUtil.isNotBlank(search.getStartDate())) {
+            queryWrapper.between(SysApi::getCreateTime, search.getStartDate(), search.getEndDate());
+        }
+        if (StrUtil.isNotBlank(search.getKeyword())) {
+            queryWrapper.and(i -> i
+                    .or().like(SysApi::getCode, search.getKeyword())
+                    .or().like(SysApi::getPath, search.getKeyword()));
+        }
+        if (StrUtil.isNotBlank(serviceId)) {
+            queryWrapper.eq(SysApi::getServiceId, serviceId);
+        }
+        queryWrapper.orderByDesc(SysApi::getId);
+        return this.baseMapper.selectPage(page, queryWrapper);
+    }
 
-	@Override
-	public SysApi getByCode(String code) {
-		LambdaQueryWrapper<SysApi> queryWrapper = new LambdaQueryWrapper<>();
-		queryWrapper.eq(SysApi::getCode, code);
-		return this.baseMapper.selectOne(queryWrapper);
-	}
+    @Override
+    public SysApi getByCode(String code) {
+        LambdaQueryWrapper<SysApi> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysApi::getCode, code);
+        return this.baseMapper.selectOne(queryWrapper);
+    }
 
-	@Override
-	public boolean status(String ids, String status) {
-		Collection<? extends Serializable> collection = CollectionUtil.stringToCollection(ids);
+    @Override
+    public boolean status(String ids, String status) {
+        Collection<? extends Serializable> collection = CollectionUtil.stringToCollection(ids);
 
-		for (Object id : collection) {
-			SysApi sysApi = this.baseMapper.selectById(CollectionUtil.objectToLong(id, 0L));
-			sysApi.setStatus(status);
-			this.baseMapper.updateById(sysApi);
-		}
-		return true;
-	}
+        for (Object id : collection) {
+            SysApi sysApi = this.baseMapper.selectById(CollectionUtil.objectToLong(id, 0L));
+            sysApi.setStatus(status);
+            this.baseMapper.updateById(sysApi);
+        }
+        return true;
+    }
 }

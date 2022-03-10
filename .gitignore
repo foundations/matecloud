@@ -6,6 +6,10 @@
 *.ear
 target/
 
+# 防提交docker本地生成文件 #
+doc/deploy/docker-standalone/mysql
+doc/deploy/docker-standalone/nacos
+
 # eclipse
 .settings/
 .classpath
@@ -35,7 +39,6 @@ temp/
 nbproject/private/
 build/
 nbbuild/
-dist/
 nbdist/
 .nb-gradle/
 

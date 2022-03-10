@@ -1,7 +1,7 @@
 package vip.mate.system.feign;
 
+import cn.hutool.core.collection.ListUtil;
 import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -17,11 +17,9 @@ import vip.mate.system.entity.SysUser;
 import vip.mate.system.service.ISysRolePermissionService;
 import vip.mate.system.service.ISysUserService;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * 远程调用获取用户信息
+ *
  * @author xuzhanfu
  */
 @Slf4j
@@ -50,8 +48,7 @@ public class SysUserProvider implements ISysUserProvider {
     @Log(value = "用户名查询用户", exception = "用户名查询用户请求失败")
     @ApiOperation(value = "用户用户名查询", notes = "用户用户名查询")
     public Result<UserInfo> getUserByUserName(String userName) {
-        SysUser sysUser = sysUserService.getOne(new LambdaQueryWrapper<SysUser>()
-                .eq(SysUser::getAccount, userName));
+        SysUser sysUser = sysUserService.getOneIgnoreTenant(new SysUser().setAccount(userName));
         return Result.data(getUserInfo(sysUser));
     }
 
@@ -60,8 +57,8 @@ public class SysUserProvider implements ISysUserProvider {
     @Log(value = "用户手机号查询", exception = "用户手机号查询请求失败")
     @ApiOperation(value = "用户手机号查询", notes = "用户手机号查询")
     public Result<UserInfo> getUserByMobile(String mobile) {
-        SysUser sysUser = sysUserService.getOne(new LambdaQueryWrapper<SysUser>()
-                .eq(SysUser::getTelephone, mobile));
+
+        SysUser sysUser = sysUserService.getOneIgnoreTenant(new SysUser().setTelephone(mobile));
         return Result.data(getUserInfo(sysUser));
     }
 
@@ -71,10 +68,8 @@ public class SysUserProvider implements ISysUserProvider {
         }
         UserInfo userInfo = new UserInfo();
         userInfo.setSysUser(sysUser);
-        userInfo.setPermissions(sysRolePermissionService.getMenuIdByRoleId(sysUser.getRoleId().toString()));
-        List<Long> longs = new ArrayList<>();
-        longs.add(sysUser.getRoleId());
-        userInfo.setRoleIds(longs);
+        userInfo.setPermissions(sysRolePermissionService.getMenuIdByRoleId(sysUser.getRoleId()));
+        userInfo.setRoleIds(ListUtil.toList(sysUser.getRoleId()));
         userInfo.setTenantId(sysUser.getTenantId());
         log.debug("feign调用：userInfo:{}", userInfo);
         return userInfo;

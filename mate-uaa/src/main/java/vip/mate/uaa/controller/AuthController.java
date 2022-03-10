@@ -2,6 +2,8 @@ package vip.mate.uaa.controller;
 
 import com.xkcoding.justauth.AuthRequestFactory;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,6 +65,9 @@ public class AuthController {
 
     @Log(value = "用户信息", exception = "用户信息请求异常")
     @GetMapping("/get/user")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Mate-Auth", required = true, value = "授权类型", paramType = "header")
+    })
     @ApiOperation(value = "用户信息", notes = "用户信息")
     public Result<?> getUser(HttpServletRequest request) {
 
@@ -79,11 +84,13 @@ public class AuthController {
         }
 
         Map<String, Object> data = new HashMap<>(7);
-        data.put("userName", loginUser.getAccount());
+        data.put("username", loginUser.getAccount());
         data.put("avatar", userInfo.getSysUser().getAvatar());
         data.put("roleId", userInfo.getSysUser().getRoleId());
         data.put("departId", userInfo.getSysUser().getDepartId());
         data.put("tenantId", userInfo.getSysUser().getTenantId());
+        data.put("realName", userInfo.getSysUser().getRealName());
+        data.put("nickName", userInfo.getSysUser().getName());
         List<String> stringList = sysRolePermissionProvider.getMenuIdByRoleId(String.valueOf(userInfo.getSysUser().getRoleId()));
         data.put("permissions", stringList);
         // 存入redis,以用于mate-starter-auth的PreAuthAspect查询权限使用
@@ -95,6 +102,9 @@ public class AuthController {
     @Log(value = "验证码获取", exception = "验证码获取请求异常")
     @GetMapping("/code")
     @ApiOperation(value = "验证码获取", notes = "验证码获取")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", required = true, value = "授权类型", paramType = "header")
+    })
     public Result<?> authCode() {
         return validateService.getCode();
     }
@@ -102,6 +112,9 @@ public class AuthController {
     @Log(value = "退出登录", exception = "退出登录请求异常")
     @PostMapping("/logout")
     @ApiOperation(value = "退出登录", notes = "退出登录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Mate-Auth", required = true, value = "授权类型", paramType = "header")
+    })
     public Result<?> logout(HttpServletRequest request) {
         if (StringUtil.isNotBlank(SecurityUtil.getHeaderToken(request))) {
             consumerTokenServices.revokeToken(SecurityUtil.getToken(request));
@@ -116,6 +129,9 @@ public class AuthController {
      */
     @Log(value = "手机验证码下发", exception = "手机验证码下发请求异常")
     @ApiOperation(value = "手机验证码下发", notes = "手机验证码下发")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", required = true, value = "授权类型", paramType = "header")
+    })
     @GetMapping("/sms-code")
     public Result<?> smsCode(String mobile) {
         return validateService.getSmsCode(mobile);

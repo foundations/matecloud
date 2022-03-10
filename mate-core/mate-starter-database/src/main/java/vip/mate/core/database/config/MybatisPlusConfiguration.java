@@ -3,7 +3,6 @@ package vip.mate.core.database.config;
 import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
@@ -15,7 +14,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import vip.mate.core.common.factory.YamlPropertySourceFactory;
 import vip.mate.core.database.handler.MateMetaObjectHandler;
@@ -30,6 +32,7 @@ import vip.mate.core.mybatis.props.MateMybatisProperties;
  * @author xuzhanfu
  * @author L.cm
  */
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @Configuration
 @AllArgsConstructor
 @EnableTransactionManagement
@@ -59,6 +62,7 @@ public class MybatisPlusConfiguration {
 	 * sql 日志
 	 */
 	@Bean
+	@Profile({"local", "dev", "test"})
 	@ConditionalOnProperty(value = "mybatis-plus.sql-log.enable", matchIfMissing = true)
 	public SqlLogInterceptor sqlLogInterceptor() {
 		return new SqlLogInterceptor();
@@ -80,9 +84,9 @@ public class MybatisPlusConfiguration {
 		PaginationInnerInterceptor paginationInnerInterceptor = new PaginationInnerInterceptor();
 		paginationInnerInterceptor.setMaxLimit(MAX_LIMIT);
 		//防止全表更新与删除插件: BlockAttackInnerInterceptor
-		BlockAttackInnerInterceptor blockAttackInnerInterceptor = new BlockAttackInnerInterceptor();
+		// BlockAttackInnerInterceptor blockAttackInnerInterceptor = new BlockAttackInnerInterceptor();
 		interceptor.addInnerInterceptor(paginationInnerInterceptor);
-		interceptor.addInnerInterceptor(blockAttackInnerInterceptor);
+		// interceptor.addInnerInterceptor(blockAttackInnerInterceptor);
 		return interceptor;
 	}
 
